@@ -32,17 +32,21 @@ char charval;
 %left NAME CARACTER NUMBER
 %start progr
 %%
+
+// Definición de la regla principal "progr"
 progr: libraries st FunctionMain {printf("Sintaxis correcta\n");}
      ;
 
+// Reglas para la sección "libraries"
 libraries :  LIBRARY
 	   | libraries LIBRARY
 	   ;
-
+// Reglas para la sección "st"
 st : Dec 
            | st Dec
 	   ;
 
+// Reglas para la declaración de variables y funciones "Dec"
 Dec : TYPE NAME ';'
 	   | TYPE VECTOR ';' 
            | TYPE NAME '('')' ';'
@@ -50,36 +54,38 @@ Dec : TYPE NAME ';'
 	   | STRUCT NAME'{' st '}'';'
            ;
 
+// Reglas para la lista de parámetros "paramlist"
 paramlist : parameter
             | paramlist ','  parameter 
             ;
             
+// Regla para la definición de parámetros "parameter"
 parameter : TYPE NAME
 	  | TYPE VECTOR
           ; 
 
-	/* block */
+// Regla para la función principal "FunctionMain"
 FunctionMain : MAIN block 
      ;
-
+// Regla para un bloque de código "block"
 block : '{' insList '}'
      ;
      
-	/* Instruction List */
+// Reglas para la lista de instrucciones "insList"
 insList :  ins ';' 
                   | insList ins ';' 
 		  | insControl
 		  | insList insControl
                   ;
 
-	/* insControl*/
+// Reglas para el control de flujo "insControl"
 insControl : IF '(' condition ')' block
 		    | IF '(' condition ')' block ELSE block
 		    | WHILE '(' condition ')' block
  		    | FOR '(' ins ';' condition ';' insList ')' block
 		    ;
 
-	/* condition*/
+// Regla para una condición "condition"
 condition : condition GT condition
 	 | condition LT condition
 	 | condition DIF condition
@@ -91,12 +97,14 @@ condition : condition GT condition
 	 | NUMBER
 	 ;
 
-	/* ins */
+
+// Reglas para las instrucciones "ins"
 ins: NAME ATTRIBUTE exp	 
             | NAME '(' callList ')'
 	    | Dec
             ;
         
+// Regla para la lista de llamadas a funciones "callList"
 callList : CARACTER
 		 | NUMBER
 		 | callList ',' NUMBER
@@ -105,7 +113,7 @@ callList : CARACTER
 		 | NAME	 
            ;
 
-	/* exp*/
+// Regla para expresiones "exp"
 exp : exp MULTY exp
 	 | exp DIV exp
 	 | exp PLUS exp
@@ -116,10 +124,11 @@ exp : exp MULTY exp
 	 ;
 
 %%
+// Función de manejo de errores
 int yyerror(char * s){
 
 }
-
+// Función principal
 int main(int argc, char** argv){
 yyin=fopen(argv[1],"r");
 yyparse();

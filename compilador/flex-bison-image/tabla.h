@@ -13,6 +13,7 @@
 #define ERRVARIABLENOTFOUND -4
 #define ERRWRONGTYPE 0
 
+// Representa los diferentes tipos de variables posibles
 union typeVar {
 int intval;
 float floatval;
@@ -20,17 +21,20 @@ char* strval;
 char charval;
 };
 
+// Representa una variable en la tabla de variables
 struct var {
 	char name[MAXVARIABLELENGTH];
 	char type[MAXTYPELENGTH];
 };
 
+// Representa una celda en la tabla de variables
 struct varTableCell {
 	struct var currentVar;
 	int initialized;
 	void *address;
 };
 
+// Representa una celda en la tabla de funciones
 struct funcTableCell {
 	char name[MAXVARIABLELENGTH];
 	char typeReturn[MAXTYPELENGTH];
@@ -39,6 +43,7 @@ struct funcTableCell {
 	int reserved;
 };
 
+// Devuelve la posición de una variable en la tabla de variables
 int posVarTable(char *varNames, struct varTableCell *table, int varNum) {
 	int pos = -1;
 	struct var v;
@@ -52,6 +57,7 @@ int posVarTable(char *varNames, struct varTableCell *table, int varNum) {
 	return pos;
 };
 
+// Agrega una función a la tabla de funciones
 void addFuncTable(char *funcName, char *typeReturn, char *params, int pos, 
 	struct funcTableCell *table, int reserved) {
 	struct funcTableCell c;
@@ -69,6 +75,7 @@ void addFuncTable(char *funcName, char *typeReturn, char *params, int pos,
 	table[pos] = c;
 }
 
+// Verifica si una función es válida dadas sus parámetros
 int checkFunc(char *funcName, char *params, struct funcTableCell *funcTable, 
 	struct varTableCell *varTable, int numberFunc, int varNum) {
 	int pos = -1;
@@ -115,6 +122,7 @@ int checkFunc(char *funcName, char *params, struct funcTableCell *funcTable,
 	return ok;
 }
 
+// Verifica si una variable ha sido inicializada
 int checkInitializedVar(char *varName, struct varTableCell *table, int varNum) {
 	int pos = posVarTable(varName, table, varNum);
 	if (pos == -1) {
@@ -124,6 +132,7 @@ int checkInitializedVar(char *varName, struct varTableCell *table, int varNum) {
 	return table[pos].initialized;
 }
 
+// Agrega una variable a la tabla de variables
 int addVarTable(char *varType, char *varNames, int pos, struct varTableCell *table) {
 	struct var v;
 	if (posVarTable(varNames, table, pos) != -1) {
@@ -156,6 +165,7 @@ int addVarTable(char *varType, char *varNames, int pos, struct varTableCell *tab
 	return 1;
 };
 
+// Imprime el valor de una variable
 void print(char *varName, struct varTableCell *table, int varNum) {
 	int pos = posVarTable(varName, table, varNum);
 
@@ -194,6 +204,7 @@ void print(char *varName, struct varTableCell *table, int varNum) {
 
 };
 
+// Establece el valor de una variable
 int setValue(char *varNames, char *value, struct varTableCell *table, int varNum) {
 
 	int pos = posVarTable(varNames, table, varNum);
@@ -267,6 +278,7 @@ int setValue(char *varNames, char *value, struct varTableCell *table, int varNum
 	return 0;
 };
 
+// Función de comparación para determinar el máximo de dos números enteros
 int maximum(int a, int b) {
 	if (a < b) {
 		return b;
@@ -275,6 +287,7 @@ int maximum(int a, int b) {
 	return a;
 };
 
+// Función de comparación para determinar el mínimo de dos números enteros
 int minimum(int a, int b) {
 	if (a < b) {
 		return a;
@@ -283,7 +296,7 @@ int minimum(int a, int b) {
 	return b;
 };
 
-
+// Ejecuta funciones reservadas como "maximum" y "minimum"
 int execReservedFunc(int pos, char *params, struct varTableCell *varTable, int varNum,
 	struct funcTableCell *funcTable, int numberFunc) {
 	printf(" ");

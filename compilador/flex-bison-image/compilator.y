@@ -1,14 +1,27 @@
 %{
+// Archivo: compilator.y
+// Descripción: Archivo de especificación de la gramática para el compilador.
+// Autor: Soto Angeles Paulette Esmeralda, Niebla Leyva Brayhan Daniel
+// Fecha: 12-01-2024
+// Nota: Este archivo utiliza la herramienta Bison para análisis sintáctico.
+
 #include <stdio.h>
+
+// Definición de funciones externas
 int yylex(void);
 int yyerror(char* s);
+
 #include <stdlib.h>
-#include "tabla.h"
+#include "tabla.h" // Incluye el archivo de tabla para funciones y variables
 #define MAXNUMBEROFVARIABLES 1024
 #define MAXNUMBEROFFUNCTIONS 1024
 #define ERR 12312312
+
+// Definición de tablas para variables y funciones
 struct varTableCell varTable[MAXNUMBEROFVARIABLES];
 struct funcTableCell funcTable[MAXNUMBEROFFUNCTIONS];
+
+// Contadores de variables y funciones
 int nrVar = 0;
 int nrFunc = 0;
 
@@ -23,6 +36,7 @@ char strval[2048];
 int intval;
 }
 
+// Definición de tokens y tipos
 %token <strval>STRCPY CONST <strval>STRCMP PRINT PRINTF LIBRARY MAIN <strval>TYPE <strval>NAME VECTOR <strval>CARACTER <strval>NUMBER STRUCT ATTRIBUTE GT LT DIF EQUAL MULTY DIV PLUS MINUS AND OR IF ELSE FOR WHILE RETURN
 %type <strval>value
 %type <strval>paramlist
@@ -42,6 +56,8 @@ int intval;
 %left NAME CARACTER NUMBER
 %start progr
 %%
+
+// Reglas de producción
 progr: libraries st FunctionMain FunctionDfn {printf("\n\n\n");}
      ;
 
@@ -53,10 +69,16 @@ st : Dec ';'
            | st Dec ';'
            ;
 
-Dec : TYPE NAME  { int res = addVarTable($1, $2, nrVar, varTable); if (res == 0) {printf(" "); } else {nrVar++;} } 
+Dec : TYPE NAME  { 
+					// Agregar variable a la tabla de variables
+					int res = addVarTable($1, $2, nrVar, varTable); if (res == 0) {printf(" "); } else {nrVar++;} 
+				 } 
            | TYPE VECTOR  
            | TYPE NAME '('')'  
-           | TYPE NAME '(' paramlist ')'  { addFuncTable($2, $1, $4, nrFunc++,funcTable, 0); }
+           | TYPE NAME '(' paramlist ')'  { 
+											// Agregar función a la tabla de funciones
+											addFuncTable($2, $1, $4, nrFunc++,funcTable, 0); 
+										  }
            | STRUCT NAME'{' st '}'
            | STRUCT NAME NAME 
            | CONST TYPE NAME  
@@ -68,7 +90,9 @@ Dec : TYPE NAME  { int res = addVarTable($1, $2, nrVar, varTable); if (res == 0)
            ;
 
 paramlist : parameter { for (int i = 0; i < 2048; i++) { $$[i] = $1[i];} }
-                | paramlist ','  parameter { char s[2048]; strcpy(s, $1); strcat(s, " "); strcat(s, $3); for (int i = 0; i < 2048; i++) { $$[i] = s[i];} }
+                | paramlist ','  parameter { 
+				// Concatenar parámetros separados por comas
+				char s[2048]; strcpy(s, $1); strcat(s, " "); strcat(s, $3); for (int i = 0; i < 2048; i++) { $$[i] = s[i];} }
             ;
             
 parameter : TYPE 
@@ -104,6 +128,7 @@ condition : condition GT condition
          | condition OR condition
          | '('  condition ')'
          | NAME { 
+		 // Verificar si la variable está declarada
             int pos = posVarTable($1, varTable, nrVar);
             if (pos == -1) {
               printf("La variable %s no fue declarada! Linea: %d\n", $1, yylineno);
@@ -160,13 +185,13 @@ Exp: Exp PLUS Exp { $$ = $1 + $3; }
         | Exp MINUS Exp { $$ = $1 - $3; }
         | Exp DIV Exp { $$ = $1 / $3; }
         | '(' Exp ')' { $$ = $2; }
-        | NUMBER { $$ = atoi($1); }
+        | NUMBER { $$ = atoi($1); } // Valor numérico
         | NAME { int poz = posVarTable($1, varTable, nrVar); 
                 if (poz == -1) { printf("La variable %s no existe! Linea: %d\n", $1, yylineno); $$ = ERR;}
                 else {
                   if (varTable[poz].initialized == 0) { printf("La variable %s no fue inicializada!\n", $1); $$ = ERR; }
                   if (strcmp(varTable[poz].currentVar.type, "int") != 0) {printf("Error! expresion invalida! Linea: %d\n",yylineno); $$ = ERR;}
-                  else { $$ = *((int *)(varTable[poz].address)); } }
+                  else { $$ = *((int *)(varTable[poz].address)); } } // Obtener el valor de la variable
                 }
         | NAME '(' callList ')' {int res; 
                 if ((res = checkFunc($1, $3, funcTable, varTable, nrFunc, nrVar)) == 1) {  printf(" "); } 
@@ -203,19 +228,21 @@ value :  CARACTER { for (int i = 0; i < 2048; i++) { $$[i] = $1[i];} }
          ;
 
 %%
+// Función de manejo de errores
 int yyerror(char * s){
 
 }
-
+// Función principal
 int main(int argc, char** argv){
-
+		// Agregar funciones reservadas al inicio
         addFuncTable("maximum", "int", "int int", nrFunc++, funcTable, 1);
         addFuncTable("minimum", "int", "int int", nrFunc++, funcTable, 1);
         yyin=fopen(argv[1],"r");
         yyparse();
-
+		// Redirigir la salida estándar al archivo "status.txt"
         freopen("status.txt", "w", stdout);
         printf("La funcion ha sido declarada en el programa: \n\n");
+		// Imprimir información de las funciones declaradas
         for (int i = 0; i < nrFunc; i++) {
                 printf("Funcion %d\n", i);
                 printf("Nombre: %s\n", funcTable[i].name);
@@ -228,7 +255,7 @@ int main(int argc, char** argv){
         }
 
         printf("\n");
-
+		// Imprimir información de las variables declaradas
         printf("situacion de las variables declaradas en el programa:\n");
         for (int i = 0; i < nrVar; i++) {
                 struct var v;

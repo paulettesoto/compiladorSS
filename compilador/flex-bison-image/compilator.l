@@ -1,7 +1,15 @@
 %{
+// Archivo: compilator.l
+// Descripción: Archivo de definición léxica para el compilador.
+// Autor: Soto Angeles Paulette Esmeralda, Niebla Leyva Brayhan Daniel
+// Fecha: 12-01-2024
+// Nota: Este archivo utiliza la herramienta Flex para análisis léxico.
+
 #include <stdio.h>
 #include "y.tab.h"
 %}
+
+// Definición de patrones de tokens
 type "int"|"float"|"char"|"string"|"double"
 nr [1-9][0-9]*
 palabra [_a-zA-Z][_a-zA-Z0-9]*
@@ -11,6 +19,9 @@ include1 \<{palabra}.h\>
 include2 \<{palabra}\>
 
 %%
+// Reglas para reconocer tokens y generar acciones
+
+// Palabras clave y tokens reservados
 struct {return STRUCT;}
 
 "const" {return CONST;}
@@ -29,6 +40,7 @@ struct {return STRUCT;}
 
 "cmp" {return STRCMP;}
 
+// Operadores y símbolos
 "*" { return MULTY; }
 
 "/" { return DIV; }
@@ -49,6 +61,7 @@ struct {return STRUCT;}
 
 "&&" { return AND; }
 
+// Estructuras
 "si" { return IF; }
 
 "sino" {return ELSE;}
@@ -57,6 +70,7 @@ struct {return STRUCT;}
 
 "para" { return FOR; }
 
+// Tipos de datos y variables
 ("int"|"float"|"char"|"string") { strcpy(yylval.strval, yytext); return TYPE;}
 
 {palabra}(\[{nr}\])+ { strcpy(yylval.strval, yytext);  return VECTOR; }
@@ -67,10 +81,14 @@ struct {return STRUCT;}
 
 {palabra} { strcpy(yylval.strval, yytext); return NAME; }
 
+// Asignación
 "=" { return ATTRIBUTE; }
 
+// Ignorar espacios y tabuladores
 [ \t] ;
 
+// Contar líneas nuevas
 \n {yylineno++;}
 
+// Caracteres no reconocidos
 . {return yytext[0];}
