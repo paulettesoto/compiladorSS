@@ -1,0 +1,15 @@
+#importar <errno.h> 
+#importar <unistd.h> 
+#importar <stdio.h> 
+#importar <string.h> 
+#importar <stdlib.h> 
+#importar <signal.h> 
+#importar <pthread.h>  
+int a; 
+ 
+int main() 
+{ 	 
+a=56;
+EscribirF(a); 	
+return 1; 
+}

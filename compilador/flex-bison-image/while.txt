@@ -1,0 +1,21 @@
+#importar <errno.h> 
+#importar <unistd.h> 
+#importar <stdio.h> 
+#importar <string.h> 
+#importar <stdlib.h> 
+#importar <signal.h> 
+#importar <pthread.h>  
+
+int i; 
+
+int main() 
+{ 	
+i=0;
+mientras(i<5) 	
+{ 	
+i=i+1; 	
+} 	
+EscribirF(i); 	
+	
+return 1; 
+}

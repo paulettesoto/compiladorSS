@@ -1,0 +1,23 @@
+#importar <errno.h> 
+#importar <unistd.h> 
+#importar <stdio.h> 
+#importar <string.h> 
+#importar <stdlib.h> 
+#importar <signal.h> 
+#importar <pthread.h>  
+int a; 
+int n;
+
+int main() 
+{ 	
+a = 0; 	
+n=3;
+	
+para(a=0;a<n;a=a+1;) 	
+{ 	 
+EscribirF(a)
+} 	
+
+
+retornar 1; 
+} 

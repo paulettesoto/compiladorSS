@@ -1,0 +1,26 @@
+La funcion ha sido declarada en el programa: 
+
+Funcion 0
+Nombre: maximum
+Tipo de retorno: int
+Funcion reservada: 1
+Tipo de parametro 0: int
+Tipo de parametro 1: int
+
+Funcion 1
+Nombre: minimum
+Tipo de retorno: int
+Funcion reservada: 1
+Tipo de parametro 0: int
+Tipo de parametro 1: int
+
+
+situacion de las variables declaradas en el programa:
+Nombre: a
+Tipo: int
+a = 4
+
+Nombre: b
+Tipo: int
+b = 2
+

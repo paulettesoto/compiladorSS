@@ -1,0 +1,1 @@
+#importar <stdio.h>   int a;  int b;      int main()  {	 b = 0;	 a = 2; 	 si ((a < 2))  	 { 		 a = 2; 	 } 	 sino 	 { 	 si(a==2) 	 { 			 a=a+2; 	 } 	 } 	 EscribirF(a); 		 b = 2; 		 	 EscribirF(b); 	 Escribir(a*b); 	 	 retornar 1;  }
